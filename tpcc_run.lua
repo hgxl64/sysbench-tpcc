@@ -129,7 +129,7 @@ function new_order()
                            (o_id, o_d_id, o_w_id, o_c_id, o_entry_d, o_carrier_id, o_ol_cnt, o_all_local)
                     VALUES (%d,%d,%d,%d,NOW(),%s,%d,%d)]]):
                     format(table_num, d_next_o_id, d_id, w_id, c_id,
-                           (sysbench.opt.use_default == "yes" and "DEFAULT" or "NULL"), ol_cnt, all_local))
+                           (sysbench.opt.insert_default == "yes" and "DEFAULT" or "NULL"), ol_cnt, all_local))
 
 -- INSERT INTO new_orders (no_o_id, no_d_id, no_w_id)
 --    VALUES (:o_id,:d_id,:w_id); */
@@ -222,7 +222,7 @@ function new_order()
                                  (ol_o_id, ol_d_id, ol_w_id, ol_number, ol_i_id, ol_supply_w_id, ol_quantity, ol_delivery_d, ol_amount, ol_dist_info)
 	                  VALUES (%d,%d,%d,%d,%d,%d,%d,%s,%d,'%s')]]):
 	                  format(table_num, d_next_o_id, d_id, w_id, ol_number, ol_i_id, ol_supply_w_id, ol_quantity,
-                                 (sysbench.opt.use_default == "yes" and "DEFAULT" or "NULL"), ol_amount, ol_dist_info))
+                                 (sysbench.opt.insert_default == "yes" and "DEFAULT" or "NULL"), ol_amount, ol_dist_info))
 
   end
 

@@ -65,8 +65,8 @@ sysbench.cmdline.options = {
       {"Extra table options, if MySQL is used. e.g. 'COLLATE latin1_bin'", ""},
    splittable =
       {"Create READ WRITE or READ ONLY transactions to allow using a splitting proxy", "no"},
-   use_default =
-      {"Use column default value on INSERT instead of NULL", "no"}
+   insert_default =
+      {"INSERT default value for columns instead of NULL (to avoid massive page splits)", "no"}
 }
 
 function sleep(n)
@@ -252,7 +252,7 @@ function create_tables(drv, con, table_num)
 	o_w_id smallint not null,
 	o_c_id int,
 	o_entry_d ]] .. datetime_type .. [[,
-	o_carrier_id ]] .. tinyint_type .. (sysbench.opt.use_default == "yes" and " DEFAULT -1" or "") .. [[,
+	o_carrier_id ]] .. tinyint_type .. (sysbench.opt.insert_default == "yes" and " DEFAULT -1" or "") .. [[,
 	o_ol_cnt ]] .. tinyint_type .. [[,
 	o_all_local ]] .. tinyint_type .. [[,
 	PRIMARY KEY(o_w_id, o_d_id, o_id)
@@ -282,7 +282,7 @@ function create_tables(drv, con, table_num)
 	ol_number ]] .. tinyint_type .. [[ not null,
 	ol_i_id int,
 	ol_supply_w_id smallint,
-	ol_delivery_d ]] .. datetime_type .. (sysbench.opt.use_default == "yes" and " DEFAULT '1900-01-01'" or "") .. [[,
+	ol_delivery_d ]] .. datetime_type .. (sysbench.opt.insert_default == "yes" and " DEFAULT '1900-01-01'" or "") .. [[,
 	ol_quantity ]] .. tinyint_type .. [[,
 	ol_amount decimal(6,2),
 	ol_dist_info char(24),
@@ -532,7 +532,7 @@ function load_tables(drv, con, warehouse_num)
 
       query = string.format([[(%d, %d, %d, %d, NOW(), %s, %d, 1 )]],
 	o_id, d_id, warehouse_num, tab[o_id],
-        o_id < 2101 and sysbench.rand.uniform(1,10) or (sysbench.opt.use_default == "yes" and "DEFAULT" or "NULL"),
+        o_id < 2101 and sysbench.rand.uniform(1,10) or (sysbench.opt.insert_default == "yes" and "DEFAULT" or "NULL"),
         a_counts[warehouse_num][d_id][o_id]
         )
       con:bulk_insert_next(query)
@@ -580,7 +580,7 @@ function load_tables(drv, con, warehouse_num)
 
       query = string.format([[(%d, %d, %d, %d, %d, %d, %s, 5, %f, '%s' )]],
 	    o_id, d_id, warehouse_num, ol_id, sysbench.rand.uniform(1, MAXITEMS), warehouse_num,
-        o_id < 2101 and "NOW()" or (sysbench.opt.use_default == "yes" and "DEFAULT" or "NULL"),
+        o_id < 2101 and "NOW()" or (sysbench.opt.insert_default == "yes" and "DEFAULT" or "NULL"),
         o_id < 2101 and 0 or sysbench.rand.uniform_double()*9999.99,
 	string.rep(sysbench.rand.string("@"),24)
         )
